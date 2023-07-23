@@ -3,7 +3,7 @@ CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "username" TEXT NOT NULL,
-    "phoneNumer" TEXT NOT NULL,
+    "phoneNumber" TEXT NOT NULL,
     "state" TEXT NOT NULL,
     "homeAddress" TEXT NOT NULL,
 
@@ -11,4 +11,4 @@ CREATE TABLE "User" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_phoneNumer_key" ON "User"("phoneNumer");
+CREATE UNIQUE INDEX "User_phoneNumber_key" ON "User"("phoneNumber");

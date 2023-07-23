@@ -11,10 +11,10 @@ datasource db {
 }
 
 model User {
-  id          String    @id @default(uuid())
-  password    String
-  username    String
-  phoneNumer  String @unique
-  state       String
-  homeAddress String
+  id              String             @id @default(uuid())
+  password        String
+  username        String
+  phoneNumber     String              @unique
+  state           String
+  homeAddress     String
 }
