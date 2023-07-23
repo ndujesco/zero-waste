@@ -1,8 +1,11 @@
 import { IsString } from 'class-validator';
 
-export class AuthCredentialsDto {
+export class CreateUserDto {
   @IsString()
   username: string;
+
+  @IsString()
+  email: string;
 
   @IsString()
   password: string;
@@ -15,4 +18,12 @@ export class AuthCredentialsDto {
 
   @IsString()
   homeAddress: string;
+}
+
+export class AuthenticateUserDto {
+  @IsString()
+  email: string;
+
+  @IsString()
+  password: string;
 }

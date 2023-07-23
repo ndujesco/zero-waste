@@ -15,6 +15,8 @@ async function bootstrap() {
   app.setGlobalPrefix('/api/v1');
   const port = process.env.PORT || 8080;
 
+  app.enableShutdownHooks();
+
   await app.listen(port);
   logger.verbose(`\nThe application is running on port ${port}\nE DEH RUSH!!`);
 }
