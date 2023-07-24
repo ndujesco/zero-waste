@@ -11,11 +11,13 @@ datasource db {
 }
 
 model User {
-  id              String             @id @default(uuid())
-  password        String
-  email           String             @unique    
-  username        String
-  phoneNumber     String             @unique
-  state           String
-  homeAddress     String
+  id          String  @id @default(uuid())
+  password    String
+  email       String  @unique
+  username    String
+  phoneNumber String  @unique
+  state       String
+  homeAddress String
+  isVerified  Boolean @default(false)
+  phoneOtp    String?
 }
