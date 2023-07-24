@@ -15,6 +15,7 @@ import {
 import { User } from '@prisma/client';
 import { compare, hash } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
+import { EmailService } from 'src/utils/email.service';
 
 type UserInfoToReturn = Partial<User> | { accessToken?: string | null };
 
@@ -30,6 +31,7 @@ export class AuthService {
 
   constructor(
     private readonly userRepository: UserRepository,
+    private readonly emailService: EmailService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -37,7 +39,7 @@ export class AuthService {
     const { username, password, email, phoneNumber, homeAddress, state } =
       createUserDto;
     const hashedPassword = await hash(password, 10);
-    const phoneOtp = this.genRandomOtp();
+    const otp = this.genRandomOtp();
 
     const data = {
       username,
@@ -46,7 +48,7 @@ export class AuthService {
       phoneNumber,
       homeAddress,
       state,
-      phoneOtp,
+      otp,
     };
 
     let user: User;
@@ -64,6 +66,7 @@ export class AuthService {
         throw new InternalServerErrorException('An unexpected error occured');
       }
     }
+    this.emailService.sendOtp(email, otp);
 
     return { ...this.exclude(user, this.infoToOmit) };
   }

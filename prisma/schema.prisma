@@ -19,5 +19,5 @@ model User {
   state       String
   homeAddress String
   isVerified  Boolean @default(false)
-  phoneOtp    String?
+  otp         String?
 }
