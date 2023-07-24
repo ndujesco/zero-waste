@@ -60,6 +60,7 @@ export class AuthService {
         if (error.message.includes('phoneNumber')) inUse = 'phoneNumber';
         throw new ConflictException(`The ${inUse} is already in use`);
       } else {
+        this.logger.error(error.message);
         throw new InternalServerErrorException('An unexpected error occured');
       }
     }
