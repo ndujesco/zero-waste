@@ -89,7 +89,7 @@ export class AuthService {
     if (!user) throw new NotFoundException('No user with this email');
 
     const isSame = await compare(password, user.password);
-    if (!isSame) throw new UnauthorizedException('The password is in correct.');
+    if (!isSame) throw new UnauthorizedException('The password is incorrect.');
 
     if (user.isVerified) {
       const payload = { id: user.id };
