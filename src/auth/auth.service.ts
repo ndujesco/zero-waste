@@ -69,7 +69,6 @@ export class AuthService {
       }
     }
     this.emailService.sendOtp(email, otp, user.username);
-
     return { ...this.exclude(user, this.infoToOmit) };
   }
 
@@ -114,9 +113,9 @@ export class AuthService {
       );
     }
 
-    if (!user) throw new NotFoundException('Invalid user.');
+    // if (!user) throw new NotFoundException('Invalid user.');
 
-    // this.emailService.sendOtp(user.email, otp);
+    this.emailService.sendOtp(user.email, otp, user.username);
     return { ...this.exclude(user, this.infoToOmit) };
   }
 
