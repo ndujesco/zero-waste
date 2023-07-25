@@ -67,7 +67,7 @@ export class AuthService {
         throw new InternalServerErrorException('An unexpected error occured');
       }
     }
-    this.emailService.sendOtp(email, otp, user.username);
+    await this.emailService.sendOtp(email, otp, user.username);
     return { ...this.exclude(user, this.infoToOmit) };
   }
 
@@ -112,7 +112,7 @@ export class AuthService {
       );
     }
 
-    this.emailService.sendOtp(user.email, otp, user.username);
+    await this.emailService.sendOtp(user.email, otp, user.username);
     return { ...this.exclude(user, this.infoToOmit) };
   }
 
