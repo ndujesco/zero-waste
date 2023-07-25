@@ -68,7 +68,7 @@ export class AuthService {
         throw new InternalServerErrorException('An unexpected error occured');
       }
     }
-    // this.emailService.sendOtp(email, otp, user.username);
+    this.emailService.sendOtp(email, otp, user.username);
 
     return { ...this.exclude(user, this.infoToOmit) };
   }
@@ -114,7 +114,7 @@ export class AuthService {
       );
     }
 
-    // if (!user) throw new NotFoundException('Invalid user.');
+    if (!user) throw new NotFoundException('Invalid user.');
 
     // this.emailService.sendOtp(user.email, otp);
     return { ...this.exclude(user, this.infoToOmit) };
