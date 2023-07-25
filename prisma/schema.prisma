@@ -22,4 +22,12 @@ model User {
   otp         String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  farmerType  Farmer
+}
+
+enum Farmer {
+  CROP
+  BLACK_SOLDIER
+  FISH_POULTRY
+  MANUAL
 }

@@ -1,4 +1,5 @@
-import { IsString } from 'class-validator';
+import { Farmer } from '@prisma/client';
+import { IsEnum, IsString } from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
@@ -18,6 +19,9 @@ export class CreateUserDto {
 
   @IsString()
   homeAddress: string;
+
+  @IsEnum(Farmer)
+  farmerType: Farmer;
 }
 
 export class AuthenticateUserDto {

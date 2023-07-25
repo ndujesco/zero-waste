@@ -38,8 +38,15 @@ export class AuthService {
   ) {}
 
   async signUp(createUserDto: CreateUserDto): Promise<UserInfoToReturn> {
-    const { username, password, email, phoneNumber, homeAddress, state } =
-      createUserDto;
+    const {
+      username,
+      password,
+      email,
+      phoneNumber,
+      homeAddress,
+      state,
+      farmerType,
+    } = createUserDto;
     const hashedPassword = await hash(password, 10);
     const otp = this.genRandomOtp();
 
@@ -51,6 +58,7 @@ export class AuthService {
       homeAddress,
       state,
       otp,
+      farmerType,
     };
 
     let user: User;
