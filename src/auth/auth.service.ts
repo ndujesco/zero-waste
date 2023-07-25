@@ -54,7 +54,6 @@ export class AuthService {
     };
 
     let user: User;
-
     try {
       user = await this.userRepository.createUser({ data });
     } catch (error) {
