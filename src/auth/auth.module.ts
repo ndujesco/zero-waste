@@ -6,12 +6,11 @@ import { UserRepository } from './user.repository';
 import { UtilsModule } from 'src/utils/utils.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { ApiKeyStrategy } from './api-strategy';
 
 @Module({
   imports: [
-    PassportModule.register({
-      defaultStrategy: ['jwt'],
-    }),
+    PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET, // this did not work because the .env filr hadn't yet been read
       signOptions: {
@@ -21,7 +20,7 @@ import { JwtModule } from '@nestjs/jwt';
     PrismaModule,
     UtilsModule,
   ],
-  providers: [AuthService, UserRepository],
+  providers: [AuthService, UserRepository, ApiKeyStrategy],
   controllers: [AuthController],
 })
 export class AuthModule {}
