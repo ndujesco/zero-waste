@@ -86,7 +86,7 @@ export class AuthService {
     let accessToken: string | null = null;
 
     const user = await this.userRepository.findOne({ where: { email } });
-    if (!user) throw new NotFoundException('User with this email');
+    if (!user) throw new NotFoundException('No user with this email');
 
     const isSame = await compare(password, user.password);
     if (!isSame) throw new UnauthorizedException('The password is in correct.');
