@@ -72,7 +72,9 @@ export class AuthService {
         throw new ConflictException(`The ${inUse} is already in use`);
       } else {
         this.logger.error(error.message);
-        throw new InternalServerErrorException('An unexpected error occured');
+        throw new InternalServerErrorException(
+          'An unexpected error has occurred, please try again later',
+        );
       }
     }
     await this.emailService.sendOtp(email, otp, user.username);
