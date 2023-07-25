@@ -113,8 +113,6 @@ export class AuthService {
       );
     }
 
-    // if (!user) throw new NotFoundException('Invalid user.');
-
     this.emailService.sendOtp(user.email, otp, user.username);
     return { ...this.exclude(user, this.infoToOmit) };
   }
@@ -129,8 +127,6 @@ export class AuthService {
         data: { isVerified: true },
       });
     } catch (error) {}
-
-    // if (!user) throw new NotFoundException('No user with this email exists');
 
     const isExpired = user.updatedAt.getTime() - Date.now() > this.otpLifeSpan;
     const notMatch = user.otp !== otp;
