@@ -72,9 +72,7 @@ export class AuthService {
         throw new ConflictException(`The ${inUse} is already in use`);
       } else {
         this.logger.error(error.message);
-        throw new InternalServerErrorException(
-          'An unexpected error has occurred, please try again later',
-        );
+        this.throwUnexpectedError(error);
       }
     }
     await this.emailService.sendOtp(email, otp, user.username);
@@ -86,8 +84,14 @@ export class AuthService {
   ): Promise<UserInfoToReturn> {
     const { email, password } = authenticateUserDto;
     let accessToken: string | null = null;
+    let user: User;
 
-    const user = await this.userRepository.findOne({ where: { email } });
+    try {
+      user = await this.userRepository.findOne({ where: { email } });
+    } catch (error) {
+      this.throwUnexpectedError(error);
+    }
+
     if (!user) throw new NotFoundException('No user with this email');
 
     const isSame = await compare(password, user.password);
@@ -117,9 +121,7 @@ export class AuthService {
       user = await this.userRepository.editUserInfo({ where: { id }, data });
     } catch (error) {
       this.logger.error(error.message);
-      throw new InternalServerErrorException(
-        'An unexpected error has occurred, please try again later',
-      );
+      this.throwUnexpectedError(error);
     }
 
     await this.emailService.sendOtp(user.email, otp, user.username);
@@ -135,7 +137,9 @@ export class AuthService {
         where: { email },
         data: { isVerified: true },
       });
-    } catch (error) {}
+    } catch (error) {
+      this.throwUnexpectedError(error);
+    }
 
     const isExpired = user.updatedAt.getTime() - Date.now() > this.otpLifeSpan;
     const notMatch = user.otp !== otp;
@@ -147,5 +151,12 @@ export class AuthService {
     const accessToken = await this.jwtService.sign(payload);
 
     return { ...this.exclude(user, this.infoToOmit), accessToken };
+  }
+
+  throwUnexpectedError(error) {
+    this.logger.error(error.message);
+    throw new InternalServerErrorException(
+      'An unexpected error has occurred, please try again later',
+    );
   }
 }
