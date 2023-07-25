@@ -15,4 +15,12 @@ export class UserRepository {
     const { where } = params;
     return this.prismaService.user.findUnique({ where });
   }
+
+  async editUserInfo(params: {
+    where: Prisma.UserWhereUniqueInput;
+    data: Prisma.UserUpdateInput;
+  }) {
+    const { where, data } = params;
+    return this.prismaService.user.update({ where, data });
+  }
 }

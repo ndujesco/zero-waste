@@ -16,14 +16,16 @@ import { User } from '@prisma/client';
 import { compare, hash } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { EmailService } from 'src/utils/email.service';
+import { UpdateEmailDto } from './dtos/update-email.dto';
+import { VerifyEmailDto } from './dtos/verify-email.dto';
 
 type UserInfoToReturn = Partial<User> | { accessToken?: string | null };
 
 @Injectable()
 export class AuthService {
   private logger = new Logger('UserService');
-  private otpLifeSpan = 1800000; // 30 minutes
-  private infoToOmit = ['id', 'password', 'phoneOtp'];
+  private otpLifeSpan = 300000; // 5 minutes
+  private infoToOmit = ['password', 'otp'];
 
   private genRandomOtp = (): string => {
     return Math.floor(1000 + Math.random() * 9000).toString();
@@ -66,7 +68,7 @@ export class AuthService {
         throw new InternalServerErrorException('An unexpected error occured');
       }
     }
-    this.emailService.sendOtp(email, otp);
+    // this.emailService.sendOtp(email, otp, user.username);
 
     return { ...this.exclude(user, this.infoToOmit) };
   }
@@ -95,5 +97,51 @@ export class AuthService {
     return Object.fromEntries(
       Object.entries(user).filter(([key]) => !keys.includes(key)),
     );
+  }
+
+  async updateEmail(updateEmailDto: UpdateEmailDto): Promise<UserInfoToReturn> {
+    const { email, id } = updateEmailDto;
+    const otp = this.genRandomOtp();
+    const data = { email, otp };
+
+    let user: User;
+    try {
+      user = await this.userRepository.editUserInfo({ where: { id }, data });
+    } catch (error) {
+      this.logger.error(error.message);
+      throw new InternalServerErrorException(
+        'An unexpected error has occurred, please try again later',
+      );
+    }
+
+    // if (!user) throw new NotFoundException('Invalid user.');
+
+    // this.emailService.sendOtp(user.email, otp);
+    return { ...this.exclude(user, this.infoToOmit) };
+  }
+
+  async verifyEmail(verifyEmailDto: VerifyEmailDto): Promise<UserInfoToReturn> {
+    const { email, otp } = verifyEmailDto;
+    let user: User;
+
+    try {
+      user = await this.userRepository.editUserInfo({
+        where: { email },
+        data: { isVerified: true },
+      });
+    } catch (error) {}
+
+    // if (!user) throw new NotFoundException('No user with this email exists');
+
+    const isExpired = user.updatedAt.getTime() - Date.now() > this.otpLifeSpan;
+    const notMatch = user.otp !== otp;
+
+    if (isExpired || notMatch)
+      throw new UnauthorizedException('The otp is invalid');
+
+    const payload = { id: user.id };
+    const accessToken = await this.jwtService.sign(payload);
+
+    return { ...this.exclude(user, this.infoToOmit), accessToken };
   }
 }
