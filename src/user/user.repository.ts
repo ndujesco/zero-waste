@@ -11,7 +11,7 @@ export class UserRepository {
     return this.prismaService.user.create({ data });
   }
 
-  async findOne(params: { where: Prisma.UserWhereUniqueInput }) {
+  async findOne(params: { where: Prisma.UserWhereUniqueInput }): Promise<User> {
     const { where } = params;
     return this.prismaService.user.findUnique({ where });
   }
@@ -19,13 +19,15 @@ export class UserRepository {
   async editUserInfo(params: {
     where: Prisma.UserWhereUniqueInput;
     data: Prisma.UserUpdateInput;
-  }) {
+  }): Promise<User> {
     const { where, data } = params;
     return this.prismaService.user.update({ where, data });
   }
 
-  async findUsers(params: { where: Prisma.UserWhereInput }) {
+  async findUsers(params: { where: Prisma.UserWhereInput }): Promise<User[]> {
     const { where } = params;
-    return this.prismaService.user.findMany({ where });
+    return this.prismaService.user.findMany({
+      where,
+    });
   }
 }

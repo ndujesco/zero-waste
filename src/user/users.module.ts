@@ -7,8 +7,9 @@ import { UtilsModule } from 'src/utils/utils.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ApiKeyStrategy } from '../api-strategy';
-import { FarmerService } from './farmer/farmer.service';
-import { FarmerController } from './farmer/farmer.controller';
+import { FarmersService } from './farmer/farmers.service';
+import { FarmersController } from './farmer/farmers.controller';
+import { ErrorService } from 'src/error/error.service';
 
 @Module({
   imports: [
@@ -22,7 +23,13 @@ import { FarmerController } from './farmer/farmer.controller';
     PrismaModule,
     UtilsModule,
   ],
-  providers: [AuthService, UserRepository, ApiKeyStrategy, FarmerService],
-  controllers: [AuthController, FarmerController],
+  providers: [
+    AuthService,
+    UserRepository,
+    ApiKeyStrategy,
+    FarmersService,
+    ErrorService,
+  ],
+  controllers: [AuthController, FarmersController],
 })
 export class UsersModule {}
