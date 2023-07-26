@@ -120,8 +120,12 @@ export class AuthService {
     try {
       user = await this.userRepository.editUserInfo({ where: { id }, data });
     } catch (error) {
-      this.logger.error(error.message);
-      this.throwUnexpectedError(error);
+      if (error.code === 'P2025') {
+        throw new NotFoundException('No user with the id exists');
+      } else {
+        this.logger.error(error.code);
+        this.throwUnexpectedError(error);
+      }
     }
 
     await this.emailService.sendOtp(user.email, otp, user.username);
