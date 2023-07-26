@@ -120,12 +120,9 @@ export class AuthService {
     try {
       user = await this.userRepository.editUserInfo({ where: { id }, data });
     } catch (error) {
-      if (error.code === 'P2025') {
+      if (error.code === 'P2025')
         throw new NotFoundException('No user with the id exists');
-      } else {
-        this.logger.error(error.code);
-        this.throwUnexpectedError(error);
-      }
+      this.throwUnexpectedError(error);
     }
 
     await this.emailService.sendOtp(user.email, otp, user.username);
@@ -142,6 +139,8 @@ export class AuthService {
         data: { isVerified: true },
       });
     } catch (error) {
+      if (error.code === 'P2025')
+        throw new NotFoundException('No user with this email.');
       this.throwUnexpectedError(error);
     }
 
