@@ -11,13 +11,13 @@ import { UserRepository } from '../user.repository';
 import {
   AuthenticateUserDto,
   CreateUserDto,
-} from '../dtos/auth-credentials.dto';
+} from './dtos/auth-credentials.dto';
 import { User } from '@prisma/client';
 import { compare, hash } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { EmailService } from 'src/utils/email.service';
-import { UpdateEmailDto } from '../dtos/update-email.dto';
-import { VerifyEmailDto } from '../dtos/verify-email.dto';
+import { UpdateEmailDto } from './dtos/update-email.dto';
+import { VerifyEmailDto } from './dtos/verify-email.dto';
 
 type UserInfoToReturn = Partial<User> | { accessToken?: string | null };
 

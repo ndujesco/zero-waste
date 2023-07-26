@@ -7,6 +7,8 @@ import { UtilsModule } from 'src/utils/utils.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ApiKeyStrategy } from '../api-strategy';
+import { FarmerService } from './farmer/farmer.service';
+import { FarmerController } from './farmer/farmer.controller';
 
 @Module({
   imports: [
@@ -20,7 +22,7 @@ import { ApiKeyStrategy } from '../api-strategy';
     PrismaModule,
     UtilsModule,
   ],
-  providers: [AuthService, UserRepository, ApiKeyStrategy],
-  controllers: [AuthController],
+  providers: [AuthService, UserRepository, ApiKeyStrategy, FarmerService],
+  controllers: [AuthController, FarmerController],
 })
 export class UsersModule {}

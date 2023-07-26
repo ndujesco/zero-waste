@@ -9,10 +9,10 @@ import {
 import {
   CreateUserDto,
   AuthenticateUserDto,
-} from '../dtos/auth-credentials.dto';
+} from './dtos/auth-credentials.dto';
 import { AuthService } from './auth.service';
-import { UpdateEmailDto } from '../dtos/update-email.dto';
-import { VerifyEmailDto } from '../dtos/verify-email.dto';
+import { UpdateEmailDto } from './dtos/update-email.dto';
+import { VerifyEmailDto } from './dtos/verify-email.dto';
 import { AuthGuard } from '@nestjs/passport';
 
 @UseGuards(AuthGuard('api-key'))
