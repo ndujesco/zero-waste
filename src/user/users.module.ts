@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
+import { AuthService } from './auth/auth.service';
+import { AuthController } from './auth/auth.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { UserRepository } from './user.repository';
 import { UtilsModule } from 'src/utils/utils.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { ApiKeyStrategy } from './api-strategy';
+import { ApiKeyStrategy } from '../api-strategy';
 
 @Module({
   imports: [
@@ -23,4 +23,4 @@ import { ApiKeyStrategy } from './api-strategy';
   providers: [AuthService, UserRepository, ApiKeyStrategy],
   controllers: [AuthController],
 })
-export class AuthModule {}
+export class UsersModule {}

@@ -23,4 +23,9 @@ export class UserRepository {
     const { where, data } = params;
     return this.prismaService.user.update({ where, data });
   }
+
+  async findUsers(params: { where: Prisma.UserWhereInput }) {
+    const { where } = params;
+    return this.prismaService.user.findMany({ where });
+  }
 }
