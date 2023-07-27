@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Query } from '@nestjs/common';
 import { GetFarmersByTypeDto } from './dtos/get-farmers-by-type.dto';
 import { FarmersService } from './farmers.service';
 import { GetFarmersFromSearchDto } from './dtos/get-farmers-search';
@@ -12,7 +12,7 @@ export class FarmersController {
     const farmers = await this.farmersService.getFarmersByType(
       getFarmersByTypeDto,
     );
-    return { sucess: true, farmers };
+    return { success: true, farmers };
   }
 
   @Get('search')
@@ -22,6 +22,12 @@ export class FarmersController {
     const farmers = await this.farmersService.getFamersFromSearch(
       getFarmersFromSearch,
     );
-    return { sucess: true, farmers };
+    return { success: true, farmers };
+  }
+
+  @Delete(':id')
+  async deleteFarmer(@Param('id') id: string) {
+    const farmer = await this.farmersService.deleteFarmer(id);
+    return { success: true, farmer };
   }
 }

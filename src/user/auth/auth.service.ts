@@ -107,12 +107,6 @@ export class AuthService {
     return { ...this.exclude(user, this.infoToOmit), accessToken };
   }
 
-  exclude<User>(user: User, keys: string[]): UserInfoToReturn {
-    return Object.fromEntries(
-      Object.entries(user).filter(([key]) => !keys.includes(key)),
-    );
-  }
-
   async updateEmail(updateEmailDto: UpdateEmailDto): Promise<UserInfoToReturn> {
     const { email, id } = updateEmailDto;
     const otp = this.genRandomOtp();
@@ -162,6 +156,12 @@ export class AuthService {
     this.logger.error(error.message);
     throw new InternalServerErrorException(
       'An unexpected error has occurred, please try again later',
+    );
+  }
+
+  exclude<User>(user: User, keys: string[]): UserInfoToReturn {
+    return Object.fromEntries(
+      Object.entries(user).filter(([key]) => !keys.includes(key)),
     );
   }
 }
