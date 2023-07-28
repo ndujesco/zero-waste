@@ -1,9 +1,9 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class UpdatePasswordDto {
+export class VerifyPasswordDto {
   @IsNotEmpty()
   @IsString()
-  password: string;
+  otp: string;
 
   @IsNotEmpty()
   @IsString()

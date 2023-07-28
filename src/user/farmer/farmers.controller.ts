@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Patch,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -15,12 +16,14 @@ import { ApiKeyGuard } from 'src/api-strategy';
 import { JwtGuard } from '../auth/jwt.strategy';
 import { UpdatePasswordDto } from './dtos/update-password.dto';
 import { User } from '@prisma/client';
+import { VerifyPasswordDto } from './dtos/verify-password-otp.dto';
 
-@UseGuards(ApiKeyGuard, JwtGuard)
+@UseGuards(ApiKeyGuard)
 @Controller('farmers')
 export class FarmersController {
   constructor(private readonly farmersService: FarmersService) {}
 
+  @UseGuards(JwtGuard)
   @Get('type')
   async getFarmersByType(
     @Query() getFarmersByTypeDto: GetFarmersByTypeDto,
@@ -33,6 +36,7 @@ export class FarmersController {
     return { success: true, farmers };
   }
 
+  @UseGuards(JwtGuard)
   @Get('search')
   async getFarmersBySearch(
     @Query() getFarmersFromSearch: GetFarmersFromSearchDto,
@@ -45,22 +49,30 @@ export class FarmersController {
     return { success: true, farmers };
   }
 
+  @UseGuards(JwtGuard)
   @Delete()
   async deleteFarmer(@GetUser() user: User) {
     const farmer = await this.farmersService.deleteFarmer(user);
     return { success: true, farmer };
   }
 
-  @Patch('update-password')
-  async updatePassword(
-    @Body() updatePasswordDto: UpdatePasswordDto,
-    @GetUser() user,
-  ) {
-    const farmer = await this.farmersService.updatePassword(
-      updatePasswordDto,
-      user,
-    );
+  @Get('request-update')
+  async requestUpdatePassword(@Query('email') email: string) {
+    const farmer = await this.farmersService.requestUpdatePassword(email);
+    return { success: true, farmer };
+  }
 
+  @Get('verify-password-otp')
+  async verifyPasswordOtp(@Query() verifyPasswordDto: VerifyPasswordDto) {
+    const farmer = await this.farmersService.verifyPasswordOtp(
+      verifyPasswordDto,
+    );
+    return { success: true, farmer };
+  }
+
+  @Patch('update-password')
+  async updatePassword(@Body() updatePasswordDto: UpdatePasswordDto) {
+    const farmer = await this.farmersService.updatePassword(updatePasswordDto);
     return { success: true, farmer };
   }
 }

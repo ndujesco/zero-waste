@@ -78,7 +78,11 @@ export class AuthService {
         this.throwUnexpectedError(error);
       }
     }
-    await this.emailService.sendOtp(email, otp, user.username);
+    await this.emailService.sendOtpForEmailVerification(
+      email,
+      otp,
+      user.username,
+    );
     return { ...this.exclude(user, this.infoToOmit) };
   }
 
@@ -126,7 +130,11 @@ export class AuthService {
       this.throwUnexpectedError(error);
     }
 
-    await this.emailService.sendOtp(user.email, otp, user.username);
+    await this.emailService.sendOtpForEmailVerification(
+      user.email,
+      otp,
+      user.username,
+    );
     return { ...this.exclude(user, this.infoToOmit) };
   }
 
@@ -145,7 +153,7 @@ export class AuthService {
       this.throwUnexpectedError(error);
     }
 
-    const isExpired = user.updatedAt.getTime() - Date.now() > this.otpLifeSpan;
+    const isExpired = Date.now() - user.updatedAt.getTime() > this.otpLifeSpan;
     const notMatch = user.otp !== otp;
 
     if (isExpired || notMatch)
