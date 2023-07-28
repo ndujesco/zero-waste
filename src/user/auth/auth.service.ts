@@ -120,7 +120,7 @@ export class AuthService {
     let user: User;
     const emailExists = await this.userRepository.findOne({ where: { email } });
     if (emailExists && emailExists.id !== id)
-      throw new ConflictException('User with this email exists');
+      throw new ConflictException('The email is already in use.');
 
     try {
       user = await this.userRepository.editUserInfo({ where: { id }, data });
