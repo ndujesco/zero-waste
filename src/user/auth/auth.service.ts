@@ -62,6 +62,7 @@ export class AuthService {
       state,
       otp,
       farmerType,
+      isVerified: false,
     };
 
     let user: User;
