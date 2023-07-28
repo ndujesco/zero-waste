@@ -10,6 +10,7 @@ import { ApiKeyStrategy } from '../api-strategy';
 import { FarmersService } from './farmer/farmers.service';
 import { FarmersController } from './farmer/farmers.controller';
 import { ErrorService } from 'src/error/error.service';
+import { JwtStrategy } from './auth/jwt.strategy';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { ErrorService } from 'src/error/error.service';
     JwtModule.register({
       secret: process.env.JWT_SECRET, // this did not work because the .env filr hadn't yet been read
       signOptions: {
-        expiresIn: 7200,
+        expiresIn: '30d',
       },
     }),
     PrismaModule,
@@ -29,6 +30,7 @@ import { ErrorService } from 'src/error/error.service';
     ApiKeyStrategy,
     FarmersService,
     ErrorService,
+    JwtStrategy,
   ],
   controllers: [AuthController, FarmersController],
 })

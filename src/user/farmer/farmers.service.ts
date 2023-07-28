@@ -4,6 +4,8 @@ import { GetFarmersByTypeDto } from './dtos/get-farmers-by-type.dto';
 import { ErrorService } from 'src/error/error.service';
 import { User } from '@prisma/client';
 import { GetFarmersFromSearchDto } from './dtos/get-farmers-search';
+import { UpdatePasswordDto } from './dtos/update-password.dto';
+import { hash } from 'bcryptjs';
 
 @Injectable()
 export class FarmersService {
@@ -16,7 +18,7 @@ export class FarmersService {
     private readonly errorService: ErrorService,
   ) {}
 
-  async getFarmersByType(getFarmersByTypeDto: GetFarmersByTypeDto) {
+  async getFarmersByType(getFarmersByTypeDto: GetFarmersByTypeDto, user: User) {
     const { farmerType } = getFarmersByTypeDto;
     const where = { farmerType };
     let farmers: User[];
@@ -25,11 +27,17 @@ export class FarmersService {
     } catch (error) {
       this.errorService.throwUnexpectedError(error, this.loggerName);
     }
+    farmers = farmers.filter(
+      (farmer) => farmer.id !== user.id && farmer.isVerified,
+    );
 
     return farmers.map((farmer) => this.exclude(farmer));
   }
 
-  async getFamersFromSearch(getFarmersFromSearchDto: GetFarmersFromSearchDto) {
+  async getFamersFromSearch(
+    getFarmersFromSearchDto: GetFarmersFromSearchDto,
+    user: User,
+  ) {
     let { search } = getFarmersFromSearchDto;
     search = search.trim();
     const where = {
@@ -48,19 +56,42 @@ export class FarmersService {
     } catch (error) {
       this.errorService.throwUnexpectedError(error, this.loggerName);
     }
+    farmers = farmers.filter(
+      (farmer) => farmer.id !== user.id && farmer.isVerified,
+    );
 
     return farmers.map((farmer) => this.exclude(farmer));
   }
 
-  async deleteFarmer(id: string) {
+  async deleteFarmer(user: User) {
     let farmer: User;
     try {
-      farmer = await this.userRepository.deleteUser({ where: { id } });
+      farmer = await this.userRepository.deleteUser({ where: { id: user.id } });
     } catch (error) {
       if (error.code === 'P2025')
-        throw new NotFoundException(`A user with the id ${id} does not exist`);
+        throw new NotFoundException(
+          `A user with the id ${user.id} does not exist`,
+        );
       this.errorService.throwUnexpectedError(error, this.loggerName);
     }
+    return this.exclude(farmer);
+  }
+
+  async updatePassword(updatePasswordDto: UpdatePasswordDto, user: User) {
+    const { password } = updatePasswordDto;
+    const hashedPassword = await hash(password, 10);
+    let farmer: User;
+    try {
+      farmer = await this.userRepository.editUserInfo({
+        where: { id: user.id },
+        data: { password: hashedPassword },
+      });
+    } catch (error) {
+      if (error.code === 'P2025')
+        throw new NotFoundException('No user with the id exists');
+      this.errorService.throwUnexpectedError(error, 'FarmerService');
+    }
+
     return this.exclude(farmer);
   }
 

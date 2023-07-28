@@ -13,9 +13,9 @@ import {
 import { AuthService } from './auth.service';
 import { UpdateEmailDto } from './dtos/update-email.dto';
 import { VerifyEmailDto } from './dtos/verify-email.dto';
-import { AuthGuard } from '@nestjs/passport';
+import { ApiKeyGuard } from 'src/api-strategy';
 
-@UseGuards(AuthGuard('api-key'))
+@UseGuards(ApiKeyGuard)
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

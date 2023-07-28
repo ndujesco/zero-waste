@@ -19,6 +19,7 @@ import { EmailService } from 'src/utils/email.service';
 import { UpdateEmailDto } from './dtos/update-email.dto';
 import { VerifyEmailDto } from './dtos/verify-email.dto';
 import { ErrorService } from 'src/error/error.service';
+import { Payload } from './jwt-payload.interface';
 
 type UserInfoToReturn = Partial<User> | { accessToken?: string | null };
 
@@ -100,7 +101,7 @@ export class AuthService {
     if (!isSame) throw new UnauthorizedException('The password is incorrect.');
 
     if (user.isVerified) {
-      const payload = { id: user.id };
+      const payload: Payload = { id: user.id };
       accessToken = await this.jwtService.sign(payload);
     }
 
@@ -113,6 +114,10 @@ export class AuthService {
     const data = { email, otp };
 
     let user: User;
+    const emailExists = await this.userRepository.findOne({ where: { email } });
+    if (emailExists && emailExists.id !== id)
+      throw new ConflictException('User with this email exists');
+
     try {
       user = await this.userRepository.editUserInfo({ where: { id }, data });
     } catch (error) {
@@ -146,7 +151,7 @@ export class AuthService {
     if (isExpired || notMatch)
       throw new UnauthorizedException('The otp is invalid');
 
-    const payload = { id: user.id };
+    const payload: Payload = { id: user.id };
     const accessToken = await this.jwtService.sign(payload);
 
     return { ...this.exclude(user, this.infoToOmit), accessToken };
