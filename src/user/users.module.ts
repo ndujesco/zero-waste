@@ -17,9 +17,6 @@ import { JwtStrategy } from './auth/jwt.strategy';
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET, // this did not work because the .env filr hadn't yet been read
-      signOptions: {
-        expiresIn: '30d',
-      },
     }),
     PrismaModule,
     UtilsModule,

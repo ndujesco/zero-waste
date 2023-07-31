@@ -100,10 +100,11 @@ export class AuthService {
       this.throwUnexpectedError(error);
     }
 
-    if (!user) throw new NotFoundException('No user with this email');
+    if (!user) throw new NotFoundException('Invalid username or password.');
 
     const isSame = await compare(password, user.password);
-    if (!isSame) throw new UnauthorizedException('The password is incorrect.');
+    if (!isSame)
+      throw new UnauthorizedException('Invalid username or password.');
 
     if (user.isVerified) {
       const payload: Payload = { id: user.id };
