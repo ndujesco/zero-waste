@@ -11,19 +11,31 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(uuid())
-  password    String
-  email       String   @unique
-  username    String
-  phoneNumber String   @unique
-  state       String
-  homeAddress String
-  isVerified  Boolean  @default(false)
-  otp         String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  farmerType  Farmer
+  id               String    @id @default(uuid())
+  password         String
+  email            String    @unique
+  username         String
+  phoneNumber      String    @unique
+  state            String
+  homeAddress      String
+  isVerified       Boolean   @default(false)
+  otp              String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  farmerType       Farmer
+  sentMessages     Message[] @relation("sent")
+  receivedMessages Message[] @relation("received")
 }
+
+model Message {
+  id         String @id @default(uuid())
+  text       String
+  senderId   String
+  sender     User   @relation("sent", fields: [senderId], references: [id])
+  receiverId String
+  receiver   User   @relation("received", fields: [receiverId], references: [id])
+}
+
 
 enum Farmer {
   CROP
