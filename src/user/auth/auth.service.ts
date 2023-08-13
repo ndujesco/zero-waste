@@ -15,10 +15,9 @@ import {
 import { User } from '@prisma/client';
 import { compare, hash } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-import { EmailService } from 'src/utils/email.service';
+import { EmailService } from '../../utils/email.service';
 import { UpdateEmailDto } from './dtos/update-email.dto';
 import { VerifyEmailDto } from './dtos/verify-email.dto';
-import { ErrorService } from 'src/error/error.service';
 import { Payload } from './jwt-payload.interface';
 
 type UserInfoToReturn = Partial<User> | { accessToken?: string | null };
@@ -37,7 +36,6 @@ export class AuthService {
     private readonly userRepository: UserRepository,
     private readonly emailService: EmailService,
     private readonly jwtService: JwtService,
-    private readonly errorService: ErrorService,
   ) {}
 
   async signUp(createUserDto: CreateUserDto): Promise<UserInfoToReturn> {
@@ -117,7 +115,7 @@ export class AuthService {
   async updateEmail(updateEmailDto: UpdateEmailDto): Promise<UserInfoToReturn> {
     const { email, id } = updateEmailDto;
     const otp = this.genRandomOtp();
-    const data = { email, otp };
+    const data = { email, otp, isVerified: false };
 
     let user: User;
     const emailExists = await this.userRepository.findOne({ where: { email } });
@@ -137,6 +135,7 @@ export class AuthService {
       otp,
       user.username,
     );
+
     return { ...this.exclude(user, this.infoToOmit) };
   }
 

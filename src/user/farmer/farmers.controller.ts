@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Patch,
-  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -12,7 +11,7 @@ import { GetFarmersByTypeDto } from './dtos/get-farmers-by-type.dto';
 import { FarmersService } from './farmers.service';
 import { GetFarmersFromSearchDto } from './dtos/get-farmers-search';
 import { GetUser } from '../auth/get-user-decorator';
-import { ApiKeyGuard } from 'src/api-strategy';
+import { ApiKeyGuard } from '../../common/guards/api.guard';
 import { JwtGuard } from '../auth/jwt.strategy';
 import { UpdatePasswordDto } from './dtos/update-password.dto';
 import { User } from '@prisma/client';

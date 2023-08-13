@@ -28,14 +28,15 @@ model User {
 }
 
 model Message {
-  id         String @id @default(uuid())
+  id         String   @id @default(uuid())
   text       String
   senderId   String
-  sender     User   @relation("sent", fields: [senderId], references: [id])
+  sender     User     @relation("sent", fields: [senderId], references: [id])
   receiverId String
-  receiver   User   @relation("received", fields: [receiverId], references: [id])
+  receiver   User     @relation("received", fields: [receiverId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
-
 
 enum Farmer {
   CROP

@@ -13,7 +13,7 @@ import {
 import { AuthService } from './auth.service';
 import { UpdateEmailDto } from './dtos/update-email.dto';
 import { VerifyEmailDto } from './dtos/verify-email.dto';
-import { ApiKeyGuard } from 'src/api-strategy';
+import { ApiKeyGuard } from '../../common/guards/api.guard';
 
 @UseGuards(ApiKeyGuard)
 @Controller('auth')
