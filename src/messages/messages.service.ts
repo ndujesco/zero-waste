@@ -90,6 +90,7 @@ export class MessagesService {
         updatedAt: message.updatedAt,
         createdAt: message.createdAt,
         status: message.senderId === senderId ? 'sender' : 'receiver',
+        seen: message.seen,
       };
     });
   }
