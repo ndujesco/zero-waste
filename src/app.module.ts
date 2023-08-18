@@ -6,6 +6,12 @@ import { MessagesModule } from './messages/messages.module';
 import { FileUploadModule } from './file_upload/file_upload.module';
 
 @Module({
-  imports: [UsersModule, PrismaModule, UtilsModule, MessagesModule, FileUploadModule],
+  imports: [
+    UsersModule,
+    PrismaModule,
+    UtilsModule,
+    MessagesModule,
+    FileUploadModule,
+  ],
 })
 export class AppModule {}

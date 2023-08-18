@@ -25,6 +25,7 @@ model User {
   farmerType       Farmer
   sentMessages     Message[] @relation("sent")
   receivedMessages Message[] @relation("received")
+  Post             Post[]
 }
 
 model Message {
@@ -37,6 +38,26 @@ model Message {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   seen       Boolean  @default(false)
+  imageUrl   String?
+  imageId    String?
+  imageLocal String?
+}
+
+model Post {
+  id       String @id @default(uuid())
+  text     String
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id])
+  links    Link[]
+}
+
+model Link {
+  id         String  @id @default(uuid())
+  imageUrl   String?
+  imageId    String?
+  imageLocal String?
+  postId     String
+  post       Post    @relation(fields: [postId], references: [id])
 }
 
 enum Farmer {
