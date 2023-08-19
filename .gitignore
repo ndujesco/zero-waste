@@ -37,3 +37,4 @@ lerna-debug.log*
 .env
 sample.html
 test.js
+images

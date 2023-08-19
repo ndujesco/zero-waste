@@ -5,27 +5,37 @@ import {
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { memoryStorage } from 'multer';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
 import { FeedService } from './feed.service';
-import { CreateUserDto } from '../user/auth/dtos/auth-credentials.dto';
+import { CreatePostDto } from './dtos/create-post.dto';
+
+const storage = diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'images');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now().toString() + '-' + file.originalname);
+  },
+});
 
 @Controller('feed')
 export class FeedController {
   constructor(private readonly feedService: FeedService) {}
   @Post('upload')
   @UseInterceptors(
-    FileInterceptor('images', {
+    FilesInterceptor('images', 4, {
       preservePath: true,
-      storage: memoryStorage(),
+      storage,
     }),
   )
   async uploadToFeed(
     @UploadedFiles() files: Express.Multer.File[],
-    @Body() createPostDto: CreateUserDto,
+    @Body() createPostDto: CreatePostDto,
   ) {
     console.log(files);
+    return files;
 
     return;
   }
