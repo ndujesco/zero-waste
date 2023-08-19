@@ -74,12 +74,12 @@ model Like {
 }
 
 model PostLink {
-  id         String  @id @default(uuid())
-  imageUrl   String?
-  imageId    String?
-  imageLocal String?
+  id         String @id @default(uuid())
+  imageUrl   String
+  imageId    String
+  imageLocal String
   postId     String
-  post       Post    @relation(fields: [postId], references: [id])
+  post       Post   @relation(fields: [postId], references: [id])
 }
 
 enum Farmer {
