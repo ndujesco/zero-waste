@@ -16,15 +16,17 @@ export class FeedController {
   constructor(private readonly feedService: FeedService) {}
   @Post('upload')
   @UseInterceptors(
-    FileInterceptor('file', {
+    FileInterceptor('images', {
       preservePath: true,
       storage: memoryStorage(),
     }),
   )
   async uploadToFeed(
-    @UploadedFiles() file: Express.Multer.File,
+    @UploadedFiles() files: Express.Multer.File[],
     @Body() createPostDto: CreateUserDto,
   ) {
+    console.log(files);
+
     return;
   }
 }
