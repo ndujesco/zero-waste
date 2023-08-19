@@ -25,7 +25,9 @@ model User {
   farmerType       Farmer
   sentMessages     Message[] @relation("sent")
   receivedMessages Message[] @relation("received")
-  Post             Post[]
+  posts            Post[]
+  comments         Comment[]
+  likes            Like[]
 }
 
 model Message {
@@ -44,14 +46,34 @@ model Message {
 }
 
 model Post {
-  id       String @id @default(uuid())
+  id       String     @id @default(uuid())
   text     String
   authorId String
-  author   User   @relation(fields: [authorId], references: [id])
-  links    Link[]
+  author   User       @relation(fields: [authorId], references: [id])
+  links    PostLink[]
+  comments Comment[]
+  likes    Like[]
 }
 
-model Link {
+model Comment {
+  id          String @id @default(uuid())
+  text        String
+  postId      String
+  post        Post   @relation(fields: [postId], references: [id])
+  commenterId String
+  commmenter  User   @relation(fields: [commenterId], references: [id])
+}
+
+model Like {
+  id      String @id @default(uuid())
+  text    String
+  postId  String
+  post    Post   @relation(fields: [postId], references: [id])
+  likerId String
+  liker   User   @relation(fields: [likerId], references: [id])
+}
+
+model PostLink {
   id         String  @id @default(uuid())
   imageUrl   String?
   imageId    String?

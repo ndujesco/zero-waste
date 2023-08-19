@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Headers,
   Post,
   UploadedFiles,
   UseInterceptors,
@@ -31,11 +32,14 @@ export class FeedController {
     }),
   )
   async uploadToFeed(
+    @Headers('host') host: string,
     @UploadedFiles() files: Express.Multer.File[],
     @Body() createPostDto: CreatePostDto,
   ) {
-    console.log(files);
-    return files;
+    console.log(host);
+
+    const urls = files.map((file) => `${host}/${file.filename}`);
+    return { urls };
 
     return;
   }
