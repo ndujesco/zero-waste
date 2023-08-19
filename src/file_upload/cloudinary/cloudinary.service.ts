@@ -12,15 +12,14 @@ export class CloudinaryService {
     file: Express.Multer.File,
   ): Promise<UploadApiResponse | UploadApiErrorResponse> {
     return new Promise((resolve, reject) => {
-      const upload = cloudinary.uploader.upload_stream(
+      return cloudinary.uploader.upload(
+        file.path,
         { folder: 'nestjs-playground' },
         (error, result) => {
           if (error) return reject(error);
           resolve(result);
         },
       );
-
-      toStream(file.buffer).pipe(upload);
     });
   }
 

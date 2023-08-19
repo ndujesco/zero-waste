@@ -34,9 +34,9 @@ model Message {
   id         String   @id @default(uuid())
   text       String
   senderId   String
-  sender     User     @relation("sent", fields: [senderId], references: [id])
+  sender     User     @relation("sent", fields: [senderId], references: [id], onDelete: Cascade)
   receiverId String
-  receiver   User     @relation("received", fields: [receiverId], references: [id])
+  receiver   User     @relation("received", fields: [receiverId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   seen       Boolean  @default(false)
@@ -47,9 +47,9 @@ model Message {
 
 model Post {
   id       String     @id @default(uuid())
-  text     String
+  text     String?
   authorId String
-  author   User       @relation(fields: [authorId], references: [id])
+  author   User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
   links    PostLink[]
   comments Comment[]
   likes    Like[]
@@ -59,27 +59,27 @@ model Comment {
   id          String @id @default(uuid())
   text        String
   postId      String
-  post        Post   @relation(fields: [postId], references: [id])
+  post        Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
   commenterId String
-  commmenter  User   @relation(fields: [commenterId], references: [id])
+  commmenter  User   @relation(fields: [commenterId], references: [id], onDelete: Cascade)
 }
 
 model Like {
   id      String @id @default(uuid())
   text    String
   postId  String
-  post    Post   @relation(fields: [postId], references: [id])
+  post    Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
   likerId String
-  liker   User   @relation(fields: [likerId], references: [id])
+  liker   User   @relation(fields: [likerId], references: [id], onDelete: Cascade)
 }
 
 model PostLink {
-  id         String @id @default(uuid())
-  imageUrl   String
-  imageId    String
+  id         String  @id @default(uuid())
+  imageUrl   String?
+  imageId    String?
   imageLocal String
   postId     String
-  post       Post   @relation(fields: [postId], references: [id])
+  post       Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
 enum Farmer {
