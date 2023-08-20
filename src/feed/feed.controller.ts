@@ -13,9 +13,9 @@ import { diskStorage } from 'multer';
 
 import { FeedService } from './feed.service';
 import { CreatePostDto } from './dtos/create-post.dto';
-import { ApiKeyGuard } from 'src/common/guards/api.guard';
-import { JwtGuard } from 'src/user/auth/jwt.strategy';
-import { GetUser } from 'src/user/auth/get-user-decorator';
+import { ApiKeyGuard } from '../common/guards/api.guard';
+import { JwtGuard } from '../user/auth/jwt.strategy';
+import { GetUser } from '../user/auth/get-user-decorator';
 import { User } from '@prisma/client';
 
 const storage = diskStorage({
