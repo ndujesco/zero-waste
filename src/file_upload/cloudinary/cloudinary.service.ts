@@ -4,7 +4,6 @@ import {
   UploadApiResponse,
   v2 as cloudinary,
 } from 'cloudinary';
-import * as toStream from 'buffer-to-stream';
 
 @Injectable()
 export class CloudinaryService {
@@ -14,10 +13,10 @@ export class CloudinaryService {
     return new Promise((resolve, reject) => {
       return cloudinary.uploader.upload(
         file.path,
-        { folder: 'nestjs-playground' },
+        { folder: 'zero-waste-feed' },
         (error, result) => {
           if (error) return reject(error);
-          resolve(result);
+          resolve({ ...result, original_filename: file.filename });
         },
       );
     });

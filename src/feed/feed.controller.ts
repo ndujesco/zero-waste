@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Headers,
+  Get,
   Post,
   UploadedFiles,
   UseGuards,
@@ -43,12 +44,17 @@ export class FeedController {
     @Body() createPostDto: CreatePostDto,
     @GetUser() user: User,
   ) {
-    const posts = await this.feedService.addPost(
+    const post = await this.feedService.addPost(
       createPostDto,
       user,
       host,
       files,
     );
+    return { message: true, post };
+  }
+
+  @Get('all') async getAllPosts(@Headers('host') host: string) {
+    const posts = await this.feedService.gePosts(host);
     return { message: true, posts };
   }
 }
