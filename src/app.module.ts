@@ -12,7 +12,6 @@ import { join } from 'path';
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../images'),
-      serveStaticOptions: { index: false },
     }),
     UsersModule,
     PrismaModule,
