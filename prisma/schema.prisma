@@ -6,12 +6,12 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id               String    @id @default(uuid())
+  id               String    @id @default(auto()) @map("_id") @db.ObjectId
   password         String
   email            String    @unique
   username         String
@@ -31,11 +31,11 @@ model User {
 }
 
 model Message {
-  id         String   @id @default(uuid())
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
   text       String
-  senderId   String
+  senderId   String   @db.ObjectId
   sender     User     @relation("sent", fields: [senderId], references: [id], onDelete: Cascade)
-  receiverId String
+  receiverId String   @db.ObjectId
   receiver   User     @relation("received", fields: [receiverId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -46,9 +46,9 @@ model Message {
 }
 
 model Post {
-  id       String     @id @default(uuid())
+  id       String     @id @default(auto()) @map("_id") @db.ObjectId
   text     String?
-  authorId String
+  authorId String     @db.ObjectId
   author   User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
   links    PostLink[]
   comments Comment[]
@@ -56,29 +56,29 @@ model Post {
 }
 
 model Comment {
-  id          String @id @default(uuid())
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
   text        String
-  postId      String
+  postId      String @db.ObjectId
   post        Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-  commenterId String
+  commenterId String @db.ObjectId
   commmenter  User   @relation(fields: [commenterId], references: [id], onDelete: Cascade)
 }
 
 model Like {
-  id      String @id @default(uuid())
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
   text    String
-  postId  String
+  postId  String @db.ObjectId
   post    Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-  likerId String
+  likerId String @db.ObjectId
   liker   User   @relation(fields: [likerId], references: [id], onDelete: Cascade)
 }
 
 model PostLink {
-  id         String  @id @default(uuid())
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
   imageUrl   String?
   imageId    String?
   imageLocal String
-  postId     String
+  postId     String  @db.ObjectId
   post       Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
