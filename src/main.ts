@@ -15,7 +15,7 @@ async function bootstrap() {
     }),
   );
 
-  // app.setGlobalPrefix('/api/v1');
+  app.setGlobalPrefix('/api/v1');
   const port = process.env.PORT || 8080;
 
   app.useStaticAssets(join(__dirname, '..', 'images'));
