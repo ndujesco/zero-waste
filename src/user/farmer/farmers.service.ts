@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { UserRepository } from '../user.repository';
 import { GetFarmersByTypeDto } from './dtos/get-farmers-by-type.dto';
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { GetFarmersFromSearchDto } from './dtos/get-farmers-search';
 import { UpdatePasswordDto } from './dtos/update-password.dto';
 import { hash } from 'bcryptjs';
@@ -26,14 +26,19 @@ export class FarmersService {
 
   async getFarmersByType(getFarmersByTypeDto: GetFarmersByTypeDto, user: User) {
     const { farmerType } = getFarmersByTypeDto;
-    const where = { farmerType };
-    let farmers: User[];
+    const where: Prisma.UserWhereInput = {
+      AND: [
+        {
+          farmerType,
+        },
+        { isVerified: true },
+        {
+          NOT: { id: user.id },
+        },
+      ],
+    };
 
-    farmers = await this.userRepository.findUsers({ where });
-
-    farmers = farmers.filter(
-      (farmer) => farmer.id !== user.id && farmer.isVerified,
-    );
+    const farmers = await this.userRepository.findUsers({ where });
 
     return farmers.map((farmer) => this.exclude(farmer));
   }
@@ -44,22 +49,25 @@ export class FarmersService {
   ) {
     let { search } = getFarmersFromSearchDto;
     search = search.trim();
-    const where = {
-      OR: [
-        { email: { contains: search } },
-        { username: { contains: search } },
-        { phoneNumber: { contains: search } },
-        { state: { contains: search } },
-        { homeAddress: { contains: search } },
+    const where: Prisma.UserWhereInput = {
+      AND: [
+        {
+          OR: [
+            { email: { contains: search } },
+            { username: { contains: search } },
+            { phoneNumber: { contains: search } },
+            { state: { contains: search } },
+            { homeAddress: { contains: search } },
+          ],
+        },
+        { isVerified: true },
+        {
+          NOT: { id: user.id },
+        },
       ],
     };
-    let farmers: User[];
 
-    farmers = await this.userRepository.findUsers({ where });
-
-    farmers = farmers.filter(
-      (farmer) => farmer.id !== user.id && farmer.isVerified,
-    );
+    const farmers = await this.userRepository.findUsers({ where });
 
     return farmers.map((farmer) => this.exclude(farmer));
   }

@@ -5,6 +5,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { Payload } from './jwt-payload.interface';
+import { isValidObjectId } from 'mongoose';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -18,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: Payload): Promise<User> {
     const { id } = payload;
 
-    if (!id) throw new UnauthorizedException();
+    if (!id || !isValidObjectId(id)) throw new UnauthorizedException();
 
     const user = await this.prismaService.user.findUnique({
       where: { id },

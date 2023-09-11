@@ -140,8 +140,12 @@ export class AuthService {
   }
 
   async verifyEmail(verifyEmailDto: VerifyEmailDto): Promise<UserInfoToReturn> {
+    //DO NOT FORGET.
     const { email, otp } = verifyEmailDto;
-    const user = await this.userRepository.findOne({ where: { email } });
+    const user = await this.userRepository.editUserInfo({
+      where: { email, otp },
+      data: { isVerified: true },
+    });
     if (!user) throw new NotFoundException('No user with this email.');
 
     const isExpired = Date.now() - user.updatedAt.getTime() > this.otpLifeSpan;
@@ -150,10 +154,7 @@ export class AuthService {
     if (isExpired || notMatch)
       throw new UnauthorizedException('The otp is invalid');
 
-    await this.userRepository.editUserInfo({
-      where: { email },
-      data: { isVerified: true },
-    });
+    user.isVerified = true;
 
     const payload: Payload = { id: user.id };
     const accessToken = await this.jwtService.sign(payload);
