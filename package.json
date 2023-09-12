@@ -36,6 +36,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "cloudinary": "^1.40.0",
+    "mongoose": "^7.5.1",
     "nodemailer": "^6.9.4",
     "passport": "^0.6.0",
     "passport-headerapikey": "^1.2.2",
