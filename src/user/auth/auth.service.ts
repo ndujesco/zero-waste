@@ -98,11 +98,10 @@ export class AuthService {
       this.throwUnexpectedError(error);
     }
 
-    if (!user) throw new NotFoundException('Invalid username or password.');
+    if (!user) throw new NotFoundException('Invalid email or password.');
 
     const isSame = await compare(password, user.password);
-    if (!isSame)
-      throw new UnauthorizedException('Invalid username or password.');
+    if (!isSame) throw new UnauthorizedException('Invalid email or password.');
 
     if (user.isVerified) {
       const payload: Payload = { id: user.id };
@@ -117,20 +116,33 @@ export class AuthService {
     const otp = this.genRandomOtp();
     const data = { email, otp, isVerified: false };
 
-    let user: User;
-    const emailExists = await this.userRepository.findOne({ where: { email } });
-    if (emailExists && emailExists.id !== id)
-      throw new ConflictException('The email is already in use.');
+    let possibleUsers: User[];
 
     try {
-      user = await this.userRepository.editUserInfo({ where: { id }, data });
+      possibleUsers = await this.userRepository.findUsers({
+        where: { OR: [{ email }, { id }] },
+      });
     } catch (error) {
-      if (error.code === 'P2025')
-        throw new NotFoundException('No user with the id exists');
-      this.throwUnexpectedError(error);
+      throw new NotFoundException('No user with the id exists.');
     }
 
-    await this.emailService.sendOtpForEmailVerification(
+    const foundUser = possibleUsers.find((user) => user.id === id);
+    if (!foundUser) throw new NotFoundException('No user with the id exists.');
+
+    /**
+     * Make sure the chosen phone number does not already exist.
+     * Even if it does, it should be this user that owns it.
+     * i.e, they can 'change' their phone number to the same thing
+     */
+    if (possibleUsers.length > 1)
+      throw new ConflictException('The email is already in use');
+
+    const user = await this.userRepository.editUserInfo({
+      where: { id },
+      data,
+    });
+
+    this.emailService.sendOtpForEmailVerification(
       user.email,
       otp,
       user.username,
@@ -142,10 +154,8 @@ export class AuthService {
   async verifyEmail(verifyEmailDto: VerifyEmailDto): Promise<UserInfoToReturn> {
     //DO NOT FORGET.
     const { email, otp } = verifyEmailDto;
-    const user = await this.userRepository.editUserInfo({
-      where: { email, otp },
-      data: { isVerified: true },
-    });
+
+    const user = await this.userRepository.findOne({ where: { email } });
     if (!user) throw new NotFoundException('No user with this email.');
 
     const isExpired = Date.now() - user.updatedAt.getTime() > this.otpLifeSpan;
@@ -153,6 +163,11 @@ export class AuthService {
 
     if (isExpired || notMatch)
       throw new UnauthorizedException('The otp is invalid');
+
+    await this.userRepository.editUserInfo({
+      where: { email },
+      data: { isVerified: true },
+    });
 
     user.isVerified = true;
 

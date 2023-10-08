@@ -126,6 +126,7 @@ export class FarmersService {
 
   async updatePassword(updatePasswordDto: UpdatePasswordDto) {
     const { password, email } = updatePasswordDto;
+
     const userExists = await this.userRepository.findOne({ where: { email } });
     if (!userExists) throw new NotFoundException('No user with this email.');
 
